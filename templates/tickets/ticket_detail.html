@@ -40,7 +40,7 @@
         <form method="post" action="{% url 'ticket_comment' ticket.pk %}">
             {% csrf_token %}
             <div class="mb-3">
-                {{ comment_form.body|add_class:"form-control" }}
+                {{ comment_form.body }}
             </div>
             <button class="btn btn-primary">Add Comment</button>
         </form>
