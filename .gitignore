@@ -1,0 +1,48 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Django stuff
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+media/
+
+# Ignore local settings
+*.local_settings.py
+
+# Environment variables
+.env
+.env.*
+
+# IDE & editor files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Byte-compiled / optimized / DLL files
+*.so
+
+# Migrations cache (keep migrations folder but not pycache)
+*/migrations/__pycache__/
+
+# Static files (collected)
+staticfiles/
+static/
+
+# Coverage & testing
+.coverage
+htmlcov/
+.tox/
+pytest_cache/
