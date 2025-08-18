@@ -1,11 +1,14 @@
 from django import forms
 from .models import Ticket, Comment
 
+class MultiFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
 class TicketForm(forms.ModelForm):
-    # allow multi-file uploads via a plain input in the template
     attachments = forms.FileField(
         required=False,
-        widget=forms.ClearableFileInput(attrs={"multiple": True})
+        widget=MultiFileInput(attrs={"multiple": True, "class": "form-control"})
     )
 
     class Meta:
@@ -17,5 +20,5 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ["body"]
         widgets = {
-            "body": forms.Textarea(attrs={"rows": 3})
+            "body": forms.Textarea(attrs={"rows": 3, "class": "form-control"})
         }
