@@ -20,6 +20,7 @@ class Ticket(models.Model):
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default="medium")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="open")
     assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="created_tickets")
     due_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
