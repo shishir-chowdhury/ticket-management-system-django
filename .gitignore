@@ -46,3 +46,4 @@ static/
 htmlcov/
 .tox/
 pytest_cache/
+.env
