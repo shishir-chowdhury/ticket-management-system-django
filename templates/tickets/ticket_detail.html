@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Ticket #{{ ticket.id }} · Helpdesk{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>#{{ ticket.id }} — {{ ticket.title }}</h3>
+    <a class="btn btn-outline-secondary" href="{% url 'ticket_edit' ticket.pk %}">Edit</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-body">
+                <p class="text-muted mb-2">
+                    Status: <span class="badge text-bg-secondary">{{ ticket.get_status_display }}</span>
+                    &nbsp; Priority: <span class="badge text-bg-info">{{ ticket.get_priority_display }}</span>
+                </p>
+                <p>{{ ticket.description|linebreaks }}</p>
+                <p class="text-muted mb-0">
+                    Created by <strong>{{ ticket.created_by }}</strong>
+                    {% if ticket.assigned_to %} · Assigned to <strong>{{ ticket.assigned_to }}</strong>{% endif %}
+                    · {{ ticket.created_at|date:"Y-m-d H:i" }}
+                    {% if ticket.due_date %} · Due {{ ticket.due_date|date:"Y-m-d" }}{% endif %}
+                </p>
+            </div>
+        </div>
+
+        <h5>Comments</h5>
+        <div class="list-group mb-3">
+            {% for c in ticket.comments.all %}
+            <div class="list-group-item">
+                <div class="small text-muted mb-1">{{ c.author }} · {{ c.created_at|date:"Y-m-d H:i" }}</div>
+                <div>{{ c.body|linebreaks }}</div>
+            </div>
+            {% empty %}
+            <div class="list-group-item text-muted">No comments yet.</div>
+            {% endfor %}
+        </div>
+
+        <form method="post" action="{% url 'ticket_comment' ticket.pk %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ comment_form.body|add_class:"form-control" }}
+            </div>
+            <button class="btn btn-primary">Add Comment</button>
+        </form>
+    </div>
+
+    <div class="col-md-4">
+        <h5>Attachments</h5>
+        <ul class="list-group mb-3">
+            {% for a in ticket.attachments.all %}
+            <li class="list-group-item">
+                <a href="{{ a.file.url }}" target="_blank">{{ a.file.name|cut:"attachments/" }}</a>
+                <div class="small text-muted">{{ a.uploaded_at|date:"Y-m-d H:i" }}</div>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">None</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
