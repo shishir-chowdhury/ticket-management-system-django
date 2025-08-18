@@ -11,10 +11,19 @@
     <div class="col-md-8">
         <div class="card mb-3">
             <div class="card-body">
-                <p class="text-muted mb-2">
-                    Status: <span class="badge text-bg-secondary">{{ ticket.get_status_display }}</span>
+                <form action="{% url 'ticket_status_update' ticket.pk %}" method="post" class="mb-2">
+                    {% csrf_token %}
+                    <label for="status" class="form-label">Status:</label>
+                    <select name="status" id="status" class="form-select d-inline w-auto" onchange="this.form.submit()">
+                        {% for value, label in ticket.STATUS_CHOICES %}
+                        <option value="{{ value }}" {% if ticket.status == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
                     &nbsp; Priority: <span class="badge text-bg-info">{{ ticket.get_priority_display }}</span>
-                </p>
+                </form>
+
                 <p>{{ ticket.description|linebreaks }}</p>
                 <p class="text-muted mb-0">
                     Created by <strong>{{ ticket.created_by }}</strong>

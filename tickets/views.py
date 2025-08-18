@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
@@ -19,12 +19,14 @@ class TicketListView(LoginRequiredMixin, ListView):
         q = self.request.GET.get("q", "")
         status = self.request.GET.get("status", "")
         base = Ticket.objects.select_related("created_by", "assigned_to").order_by("-created_at")
-        # Regular users: see own or assigned; staff: see all
         if not self.request.user.is_staff:
             base = base.filter(Q(created_by=self.request.user) | Q(assigned_to=self.request.user))
         if q:
             base = base.filter(Q(title__icontains=q) | Q(description__icontains=q))
         if status:
+            if status not in dict(Ticket.STATUS_CHOICES).keys():
+                messages.error(self.request, "Invalid status filter.")
+                return base.none()
             base = base.filter(status=status)
         return base
 
@@ -38,7 +40,6 @@ class TicketCreateView(LoginRequiredMixin, CreateView):
         ticket = form.save(commit=False)
         ticket.created_by = self.request.user
         ticket.save()
-        # handle multiple attachments
         for f in self.request.FILES.getlist("attachments"):
             Attachment.objects.create(ticket=ticket, file=f)
         messages.success(self.request, "Ticket created successfully.")
@@ -69,7 +70,6 @@ class TicketUpdateView(LoginRequiredMixin, UpdateView):
         qs = Ticket.objects.all()
         if self.request.user.is_staff:
             return qs
-        # Allow editing if creator or assignee
         return qs.filter(Q(created_by=self.request.user) | Q(assigned_to=self.request.user))
 
     def form_valid(self, form):
@@ -81,13 +81,9 @@ class TicketUpdateView(LoginRequiredMixin, UpdateView):
 
 class AddCommentView(LoginRequiredMixin, View):
     def post(self, request, pk):
-        ticket = Ticket.objects.filter(pk=pk).first()
-        if not ticket:
-            messages.error(request, "Ticket not found.")
-            return redirect("ticket_list")
+        ticket = get_object_or_404(Ticket, pk=pk)
 
-        # permission check
-        if not (request.user.is_staff or ticket.created_by_id == request.user.id or ticket.assigned_to_id == request.user.id):
+        if not (request.user.is_staff or ticket.created_by == request.user or ticket.assigned_to == request.user):
             messages.error(request, "You don't have permission to comment on this ticket.")
             return redirect("ticket_list")
 
@@ -98,3 +94,24 @@ class AddCommentView(LoginRequiredMixin, View):
         else:
             messages.error(request, "Please write a valid comment.")
         return redirect("ticket_detail", pk=pk)
+
+
+class TicketStatusUpdateView(LoginRequiredMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+        ticket = get_object_or_404(Ticket, pk=pk)
+
+        # Permission check
+        if not (request.user.is_staff or ticket.created_by == request.user or ticket.assigned_to == request.user):
+            messages.error(request, "You don't have permission to update this ticket.")
+            return redirect("ticket_list")
+
+        # Get status from POST data
+        status = request.POST.get("status")
+        if status not in dict(Ticket.STATUS_CHOICES).keys():
+            messages.error(request, "Invalid status.")
+        else:
+            ticket.status = status
+            ticket.save()
+            messages.success(request, f"Ticket status changed to {ticket.get_status_display()}.")
+
+        return redirect("ticket_detail", pk=ticket.pk)
