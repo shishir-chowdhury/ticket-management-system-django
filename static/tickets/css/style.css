@@ -155,3 +155,17 @@ body {
 #comment-form button:hover {
     background: linear-gradient(135deg, #0056b3, #003f7f);
 }
+.table-hover tbody tr:hover {
+    background-color: rgba(74, 144, 226, 0.1);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.bg-gradient {
+    background: linear-gradient(135deg, #4A90E2, #007AFF);
+}
+.text-decoration-none:hover {
+    text-decoration: underline;
+}
+.btn-sm i {
+    vertical-align: middle;
+}
