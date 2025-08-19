@@ -39,7 +39,6 @@ media/
 
 # Static files (collected)
 staticfiles/
-static/
 
 # Coverage & testing
 .coverage
