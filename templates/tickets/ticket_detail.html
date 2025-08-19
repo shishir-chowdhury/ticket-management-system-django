@@ -30,7 +30,15 @@
                     <p><strong>Due Date:</strong> {{ ticket.due_date|date:"Y-m-d" }}</p>
                     {% endif %}
                     <p><strong>Priority:</strong>
-                        <span class="badge bg-info">{{ ticket.get_priority_display }}</span>
+                        {% if ticket.priority == "high" %}
+                        <span class="badge bg-danger text-white">{{ ticket.get_priority_display }}</span>
+                        {% elif ticket.priority == "urgent" %}
+                        <span class="badge bg-danger text-white">{{ ticket.get_priority_display }}</span>
+                        {% elif ticket.priority == "medium" %}
+                        <span class="badge bg-info text-dark">{{ ticket.get_priority_display }}</span>
+                        {% else %}
+                        <span class="badge bg-secondary text-dark">{{ ticket.get_priority_display }}</span>
+                        {% endif %}
                     </p>
 
                     <!-- Status Dropdown -->
