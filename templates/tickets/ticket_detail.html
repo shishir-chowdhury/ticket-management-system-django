@@ -1,18 +1,20 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block title %}Ticket #{{ ticket.id }} · Helpdesk{% endblock %}
+
 <link rel="stylesheet" href="{% static 'ticket/css/style.css' %}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
 
 {% block content %}
 <div class="container-fluid py-3">
     <div class="row">
-        <!-- Left Column: Ticket Details -->
+        <!-- Left Column: Ticket Details & Attachments -->
         <div class="col-md-4">
+            <!-- Ticket Details Card -->
             <div class="card shadow-sm mb-3">
-                <div class="card-header bg-light fw-bold">Ticket Details</div>
-                <div class="card-body">
+                <div class="card-header">Ticket Details</div>
+                <div class="card-body bg-light">
                     <p><strong>Ticket #:</strong> {{ ticket.id }}</p>
                     <p><strong>Title:</strong> {{ ticket.title }}</p>
                     <p><strong>Created By:</strong> {{ ticket.created_by }}</p>
@@ -46,9 +48,9 @@
                 </div>
             </div>
 
-            <!-- Attachments -->
+            <!-- Attachments Card -->
             <div class="card shadow-sm">
-                <div class="card-header bg-light fw-bold">Attachments</div>
+                <div class="card-header">Attachments</div>
                 <ul class="list-group list-group-flush">
                     {% for a in ticket.attachments.all %}
                     <li class="list-group-item">
@@ -62,17 +64,29 @@
             </div>
         </div>
 
-        <!-- Right Column: Comments & Conversation -->
+        <!-- Right Column: Conversation & Add Comment -->
         <div class="col-md-8">
             <!-- Conversation Card -->
             <div class="card shadow-sm mb-3">
-                <div class="card-header bg-light fw-bold">Conversation</div>
-                <div class="card-body" style="max-height: 500px; overflow-y: auto;" id="comments-container">
+                <div class="card-header">Conversation</div>
+                <div class="card-body" id="comments-container" style="max-height:500px; overflow-y:auto;">
                     {% for c in ticket.comments.all %}
-                    <div class="mb-3 p-3 rounded {% if c.author == ticket.created_by %}bg-light{% else %}bg-info text-white{% endif %}">
-                        <div class="small fw-bold">{{ c.author.username }}</div>
-                        <div>{{ c.body|linebreaks }}</div>
-                        <div class="small text-muted">{{ c.created_at|date:"Y-m-d H:i" }}</div>
+                    <div class="d-flex mb-3">
+                        <!-- Avatar -->
+                        <div class="comment-avatar">
+                            {{ c.author.username|slice:":1"|upper }}
+                        </div>
+
+                        <div class="ms-2 w-100">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ c.author.username }}</strong>
+                                <small class="text-muted">{{ c.created_at|date:"Y-m-d H:i" }}</small>
+                            </div>
+                            <div class="mt-1 px-3 py-2 rounded"
+                                 style="background-color: {% if c.author == ticket.created_by %}#f1f3f5{% else %}#0d6efd; color:white{% endif %};">
+                                {{ c.body|linebreaks }}
+                            </div>
+                        </div>
                     </div>
                     {% empty %}
                     <div class="text-muted">No comments yet.</div>
@@ -80,14 +94,15 @@
                 </div>
             </div>
 
-            <!-- Add Comment Form -->
+            <!-- Add Comment Card -->
             <div class="card shadow-sm">
-                <div class="card-header bg-light fw-bold">Add Comment</div>
+                <div class="card-header">Add Comment</div>
                 <div class="card-body">
                     <form id="comment-form" method="post" action="{% url 'ticket_comment' ticket.pk %}">
                         {% csrf_token %}
                         <div class="input-group">
-                            <textarea name="body" class="form-control rounded-start" rows="2" placeholder="Write a comment..." required></textarea>
+                            <textarea name="body" class="form-control rounded-start" rows="2"
+                                      placeholder="Write a comment..." required></textarea>
                             <button type="submit" class="btn btn-primary rounded-end">
                                 <i class="bi bi-send-fill"></i> Send
                             </button>
@@ -96,7 +111,6 @@
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </div>
 {% endblock %}

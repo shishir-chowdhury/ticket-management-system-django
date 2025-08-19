@@ -83,3 +83,75 @@ body {
 #comment-form textarea {
     resize: none;
 }
+
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #4A90E2, #007AFF);
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+
+.card-body.bg-light {
+    background: linear-gradient(180deg, #ffffff 0%, #f9faff 100%);
+}
+
+.list-group-item {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-left: 4px solid #007AFF;
+    border-radius: 0.5rem;
+    margin-bottom: 0.3rem;
+    transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f1f5fb;
+}
+
+.comment-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    line-height: 36px;
+    border-radius: 50%;
+    background: #007AFF;
+    color: white;
+    text-align: center;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+#comments-container .rounded {
+    border-radius: 0.8rem;
+}
+
+#comments-container::-webkit-scrollbar {
+    width: 8px;
+}
+#comments-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 4px;
+}
+
+#comment-form textarea {
+    resize: none;
+    background: #f8faff;
+    border: 1px solid #ced4da;
+}
+#comment-form button {
+    background: linear-gradient(135deg, #4A90E2, #007AFF);
+    border: none;
+    color: white;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+#comment-form button:hover {
+    background: linear-gradient(135deg, #0056b3, #003f7f);
+}
