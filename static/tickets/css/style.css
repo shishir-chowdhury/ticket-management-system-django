@@ -58,3 +58,28 @@ body {
     width: 240px;
     z-index: 1100;
 }
+
+.comment-item {
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.comment-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.avatar {
+    flex-shrink: 0;
+    font-weight: bold;
+}
+
+#comments-container::-webkit-scrollbar {
+    width: 6px;
+}
+#comments-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.15);
+    border-radius: 3px;
+}
+
+#comment-form textarea {
+    resize: none;
+}

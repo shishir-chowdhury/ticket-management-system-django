@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Ticket #{{ ticket.id }} · Helpdesk{% endblock %}
+<link rel="stylesheet" href="{% static 'ticket/css/style.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 
 {% block content %}
 <div class="container-fluid py-3">
@@ -61,12 +64,13 @@
 
         <!-- Right Column: Comments & Conversation -->
         <div class="col-md-8">
+            <!-- Conversation Card -->
             <div class="card shadow-sm mb-3">
                 <div class="card-header bg-light fw-bold">Conversation</div>
-                <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                <div class="card-body" style="max-height: 500px; overflow-y: auto;" id="comments-container">
                     {% for c in ticket.comments.all %}
-                    <div class="mb-3 p-2 rounded {% if c.author == ticket.created_by %}bg-light{% else %}bg-info text-white{% endif %}">
-                        <div class="small fw-bold">{{ c.author }}</div>
+                    <div class="mb-3 p-3 rounded {% if c.author == ticket.created_by %}bg-light{% else %}bg-info text-white{% endif %}">
+                        <div class="small fw-bold">{{ c.author.username }}</div>
                         <div>{{ c.body|linebreaks }}</div>
                         <div class="small text-muted">{{ c.created_at|date:"Y-m-d H:i" }}</div>
                     </div>
@@ -76,20 +80,23 @@
                 </div>
             </div>
 
-            <!-- Add Comment -->
+            <!-- Add Comment Form -->
             <div class="card shadow-sm">
                 <div class="card-header bg-light fw-bold">Add Comment</div>
                 <div class="card-body">
-                    <form method="post" action="{% url 'ticket_comment' ticket.pk %}">
+                    <form id="comment-form" method="post" action="{% url 'ticket_comment' ticket.pk %}">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            {{ comment_form.body }}
+                        <div class="input-group">
+                            <textarea name="body" class="form-control rounded-start" rows="2" placeholder="Write a comment..." required></textarea>
+                            <button type="submit" class="btn btn-primary rounded-end">
+                                <i class="bi bi-send-fill"></i> Send
+                            </button>
                         </div>
-                        <button class="btn btn-primary">Submit</button>
                     </form>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </div>
 {% endblock %}
