@@ -4,10 +4,10 @@ from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
-
-from .forms import TicketForm, CommentForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Ticket, Attachment, Comment
+from .forms import TicketForm, CommentForm
+
 
 class TicketListView(LoginRequiredMixin, ListView):
     model = Ticket
@@ -30,6 +30,7 @@ class TicketListView(LoginRequiredMixin, ListView):
             base = base.filter(status=status)
         return base
 
+
 class TicketCreateView(LoginRequiredMixin, CreateView):
     model = Ticket
     form_class = TicketForm
@@ -44,6 +45,7 @@ class TicketCreateView(LoginRequiredMixin, CreateView):
             Attachment.objects.create(ticket=ticket, file=f)
         messages.success(self.request, "Ticket created successfully.")
         return redirect("ticket_detail", pk=ticket.pk)
+
 
 class TicketDetailView(LoginRequiredMixin, DetailView):
     model = Ticket
@@ -60,6 +62,7 @@ class TicketDetailView(LoginRequiredMixin, DetailView):
         ctx = super().get_context_data(**kwargs)
         ctx["comment_form"] = CommentForm()
         return ctx
+
 
 class TicketUpdateView(LoginRequiredMixin, UpdateView):
     model = Ticket
@@ -78,6 +81,7 @@ class TicketUpdateView(LoginRequiredMixin, UpdateView):
             Attachment.objects.create(ticket=ticket, file=f)
         messages.success(self.request, "Ticket updated.")
         return redirect("ticket_detail", pk=ticket.pk)
+
 
 class AddCommentView(LoginRequiredMixin, View):
     def post(self, request, pk):
@@ -115,3 +119,9 @@ class TicketStatusUpdateView(LoginRequiredMixin, View):
             messages.success(request, f"Ticket status changed to {ticket.get_status_display()}.")
 
         return redirect("ticket_detail", pk=ticket.pk)
+
+
+class TicketDeleteView(LoginRequiredMixin, DeleteView):
+    model = Ticket
+    template_name = "tickets/ticket_confirm_delete.html"
+    success_url = reverse_lazy('ticket_list')
