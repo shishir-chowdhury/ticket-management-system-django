@@ -17,12 +17,15 @@
                 <div class="card-body bg-light">
                     <p><strong>Ticket #:</strong> {{ ticket.id }}</p>
                     <p><strong>Title:</strong> {{ ticket.title }}</p>
-                    <p><strong>Created By:</strong> {{ ticket.created_by }}</p>
+                    <p><strong>Created By:</strong>
+                        <span class="badge bg-warning text-dark">{{ ticket.created_by }}</span>
+                    </p>
+
                     <p><strong>Assigned To:</strong>
                         {% if ticket.assigned_to %}
-                        {{ ticket.assigned_to }}
+                        <span class="badge bg-success text-white">{{ ticket.assigned_to }}</span>
                         {% else %}
-                        <span class="text-muted">Unassigned</span>
+                        <span class="badge bg-secondary text-white">Unassigned</span>
                         {% endif %}
                     </p>
                     <p><strong>Created At:</strong> {{ ticket.created_at|date:"Y-m-d H:i" }}</p>
